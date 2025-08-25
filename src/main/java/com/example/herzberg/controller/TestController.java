@@ -52,23 +52,6 @@ public class TestController {
         return "index";
     }
 
-
-//    @PostMapping("/submit")
-//    public String submitTest(@RequestParam String username,
-//                             @RequestParam List<Integer> scores,
-//                             @RequestParam List<String> questions,
-//                             Model model) {
-//        for (int i = 0; i < questions.size(); i++) {
-//            Answer a = new Answer();
-//            a.setUsername(username);
-//            a.setQuestion(questions.get(i));
-//            a.setScore(scores.get(i));
-//            repo.save(a);
-//        }
-//        model.addAttribute("username", username);
-//        model.addAttribute("count", questions.size());
-//        return "result";
-//    }
 @PostMapping("/submit")
 public String submitTest(@RequestParam String username,
                          @RequestParam List<Integer> scores,
