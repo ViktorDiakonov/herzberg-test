@@ -86,6 +86,10 @@ public String submitTest(@RequestParam String username,
     double motivationAvg = (motivationCount > 0) ? (double) motivationSum / motivationCount : 0;
     double hygieneAvg = (hygieneCount > 0) ? (double) hygieneSum / hygieneCount : 0;
 
+// округлення до 1 знаку після коми
+    motivationAvg = Math.round(motivationAvg * 10.0) / 10.0;
+    hygieneAvg = Math.round(hygieneAvg * 10.0) / 10.0;
+
     model.addAttribute("username", username);
     model.addAttribute("count", questions.size());
     model.addAttribute("motivationAvg", motivationAvg);
