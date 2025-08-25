@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Тест Герцберга</title>
+</head>
+<body>
+<h2>Тест Герцберга</h2>
+<form th:action="@{/submit}" method="post">
+    Ім’я: <input type="text" name="username" required><br><br>
+    <div th:each="q, iStat : ${questions}">
+        <p th:text="${q}"></p>
+        <input type="hidden" th:name="questions" th:value="${q}">
+        <select th:name="scores" required>
+            <option value="1">1 (зовсім не погоджуюсь)</option>
+            <option value="2">2</option>
+            <option value="3">3 (нейтрально)</option>
+            <option value="4">4</option>
+            <option value="5">5 (повністю погоджуюсь)</option>
+        </select>
+    </div>
+    <br>
+    <button type="submit">Відправити</button>
+</form>
+</body>
+</html>
