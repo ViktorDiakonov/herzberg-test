@@ -1,19 +1,23 @@
 package com.example.herzberg.controller;
 
 import com.example.herzberg.model.Answer;
+import com.example.herzberg.model.UserResultDto;
 import com.example.herzberg.repository.AnswerRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
 
 @Controller
 public class TestController {
-    private final AnswerRepository repo;
+    private final AnswerRepository answerRepo;
 
-    public TestController(AnswerRepository repo) {
-        this.repo = repo;
+    public TestController(AnswerRepository answerRepo) {
+        this.answerRepo = answerRepo;
     }
 
     @GetMapping("/")
@@ -52,50 +56,98 @@ public class TestController {
         return "index";
     }
 
-@PostMapping("/submit")
-public String submitTest(@RequestParam String username,
-                         @RequestParam List<Integer> scores,
-                         @RequestParam List<String> questions,
-                         Model model) {
+    @PostMapping("/submit")
+    public String submitTest(@RequestParam String username,
+                             @RequestParam List<Integer> scores,
+                             @RequestParam List<String> questions,
+                             Model model) {
 
-    int motivationSum = 0;
-    int hygieneSum = 0;
-    int motivationCount = 0;
-    int hygieneCount = 0;
+        for (int i = 0; i < questions.size(); i++) {
+            Answer a = new Answer();
+            a.setUsername(username);
+            a.setQuestion(questions.get(i));
+            a.setScore(scores.get(i));
+            answerRepo.save(a);
+        }
 
-    for (int i = 0; i < questions.size(); i++) {
-        Answer a = new Answer();
-        a.setUsername(username);
-        a.setQuestion(questions.get(i));
-        a.setScore(scores.get(i));
-        repo.save(a);
-
-        // Розподіл по групах факторів (умовно, базуючись на методиці Герцберга)
-        int qNum = i + 1;
-        if (qNum == 1 || qNum == 5 || qNum == 7 || qNum == 9 || qNum == 13 ||
-                qNum == 16 || qNum == 17 || qNum == 19 || qNum == 22 || qNum == 24 ||
-                qNum == 25 || qNum == 27) {
-            motivationSum += scores.get(i);
-            motivationCount++;
-        } else {
-            hygieneSum += scores.get(i);
-            hygieneCount++;
+        try {
+            // Кодируем имя пользователя для URL
+            String encodedUsername = URLEncoder.encode(username, StandardCharsets.UTF_8.toString());
+            return "redirect:/results/user/" + encodedUsername;
+        } catch (UnsupportedEncodingException e) {
+            // В случае ошибки кодирования, возвращаем без кодирования
+            return "redirect:/results/user/" + username;
         }
     }
 
-    double motivationAvg = (motivationCount > 0) ? (double) motivationSum / motivationCount : 0;
-    double hygieneAvg = (hygieneCount > 0) ? (double) hygieneSum / hygieneCount : 0;
+//    // список усіх користувачів
+//    @GetMapping("/results")
+//    public String showAllResults(Model model) {
+//        List<String> users = answerRepo.findDistinctUsernames();
+//        model.addAttribute("users", users);
+//        return "results";
+//    }
+@GetMapping("/results")
+public String showAllResults(Model model) {
+    List<String> users = answerRepo.findDistinctUsernames();
+    List<UserResultDto> results = new ArrayList<>();
 
-// округлення до 1 знаку після коми
-    motivationAvg = Math.round(motivationAvg * 10.0) / 10.0;
-    hygieneAvg = Math.round(hygieneAvg * 10.0) / 10.0;
+    for (String username : users) {
+//        List<Answer> answers = answerRepo.findByUsername(username);
+        List<Answer> answers = answerRepo.findByUsernameOrderByCreatedAtDesc(username);
 
-    model.addAttribute("username", username);
-    model.addAttribute("count", questions.size());
-    model.addAttribute("motivationAvg", motivationAvg);
-    model.addAttribute("hygieneAvg", hygieneAvg);
+        UserResultDto dto = new UserResultDto();
+        dto.setUsername(username);
+        dto.setDateTime(answers.get(0).getTimestamp()); // предполагая, что время сохранения есть
 
-    return "result";
+        // Гігієнічні фактори
+        dto.setFinancialMotives(answers.get(2).getScore() + answers.get(11).getScore() + answers.get(22).getScore());
+        dto.setRecognition(answers.get(8).getScore() + answers.get(26).getScore());
+        dto.setManagementAttitude(answers.get(5).getScore() + answers.get(13).getScore() + answers.get(20).getScore());
+        dto.setTeamwork(answers.get(9).getScore() + answers.get(27).getScore());
+
+        // Мотиваційні фактори
+        dto.setResponsibility(answers.get(0).getScore() + answers.get(21).getScore());
+        dto.setCareer(answers.get(6).getScore() + answers.get(23).getScore());
+        dto.setAchievements(answers.get(12).getScore() + answers.get(18).getScore());
+        dto.setWorkContent(answers.get(4).getScore() + answers.get(15).getScore() + answers.get(16).getScore() + answers.get(19).getScore());
+
+        results.add(dto);
+    }
+
+    // Сортируем результаты по дате (новые сверху)
+    results.sort((r1, r2) -> r2.getDateTime().compareTo(r1.getDateTime()));
+
+    model.addAttribute("results", results);
+    return "results";
 }
 
+    // детальні відповіді для одного користувача
+    @GetMapping("/results/user/{username}")
+    public String showUserResult(@PathVariable String username, Model model) {
+        List<Answer> answers = answerRepo.findByUsername(username);
+
+        // групування за факторами Герцберга
+        Map<String, Integer> hygiene = new LinkedHashMap<>();
+        Map<String, Integer> motivation = new LinkedHashMap<>();
+
+        hygiene.put("Фінансові мотиви", answers.get(2).getScore() + answers.get(11).getScore() + answers.get(22).getScore());
+        hygiene.put("Суспільне визнання", answers.get(8).getScore() + answers.get(26).getScore());
+        hygiene.put("Ставлення з керівництвом", answers.get(5).getScore() + answers.get(13).getScore() + answers.get(20).getScore());
+        hygiene.put("Співпраця в колективі", answers.get(9).getScore() + answers.get(27).getScore());
+
+        motivation.put("Відповідальність роботи", answers.get(0).getScore() + answers.get(21).getScore());
+        motivation.put("Кар'єра, просування по службі", answers.get(6).getScore() + answers.get(23).getScore());
+        motivation.put("Досягнення особистого успіху", answers.get(12).getScore() + answers.get(18).getScore());
+        motivation.put("Зміст роботи", answers.get(4).getScore() + answers.get(15).getScore() + answers.get(16).getScore() + answers.get(19).getScore());
+
+        model.addAttribute("username", username);
+        model.addAttribute("answers", answers);
+        model.addAttribute("hygieneLabels", hygiene.keySet());
+        model.addAttribute("hygieneScores", hygiene.values());
+        model.addAttribute("motivationLabels", motivation.keySet());
+        model.addAttribute("motivationScores", motivation.values());
+
+        return "result";
+    }
 }

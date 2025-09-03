@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Результати опитування</title>
+    <style>
+        body{font-family:Arial,sans-serif;margin:0;padding:40px;background:#2f2f2f;color:#fff}
+        .result-box{max-width:1200px;margin:0 auto;padding:20px 30px;background:#fff;color:#000;border-radius:8px;box-shadow:0 0 15px rgba(0,0,0,.5)}
+        h2{text-align:center;margin-bottom:20px}
+        table{width:100%;border-collapse:collapse;margin-top:15px}
+        th,td{border:1px solid #ccc;padding:10px 12px;text-align:left}
+        th{background:#f2f2f2}
+        tr:nth-child(even){background:#fafafa}
+        .factor-title{font-weight:bold;color:#2c3e50;margin-top:8px}
+        .factor-value{color:#2980b9}
+    </style>
+</head>
+<body>
+<div class="result-box">
+    <h2>Результати опитування Герцберга</h2>
+    <table>
+        <thead>
+        <tr>
+            <th>Дата та час</th>
+            <th>Ім'я учасника</th>
+            <th>Гігієнічні фактори</th>
+            <th>Мотиваційні фактори</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="result : ${results}">
+            <td th:text="${#temporals.format(result.dateTime, 'dd.MM.yyyy HH:mm')}"></td>
+            <td>
+                <a th:href="@{'/results/user/' + ${result.username}}" th:text="${result.username}"></a>
+            </td>
+            <td>
+                <div class="factor-title">Фінансові мотиви:
+                    <span class="factor-value" th:text="${result.financialMotives} + ' / 15'"></span>
+                </div>
+                <div class="factor-title">Визнання:
+                    <span class="factor-value" th:text="${result.recognition} + ' / 10'"></span>
+                </div>
+                <div class="factor-title">Ставлення керівництва:
+                    <span class="factor-value" th:text="${result.managementAttitude} + ' / 15'"></span>
+                </div>
+                <div class="factor-title">Колектив:
+                    <span class="factor-value" th:text="${result.teamwork} + ' / 10'"></span>
+                </div>
+            </td>
+            <td>
+                <div class="factor-title">Відповідальність:
+                    <span class="factor-value" th:text="${result.responsibility} + ' / 10'"></span>
+                </div>
+                <div class="factor-title">Кар'єра:
+                    <span class="factor-value" th:text="${result.career} + ' / 10'"></span>
+                </div>
+                <div class="factor-title">Досягнення:
+                    <span class="factor-value" th:text="${result.achievements} + ' / 10'"></span>
+                </div>
+                <div class="factor-title">Зміст роботи:
+                    <span class="factor-value" th:text="${result.workContent} + ' / 20'"></span>
+                </div>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

@@ -1,79 +1,211 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <title>Результат</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 40px;
-            background-color: #2f2f2f; /* антрацит */
-            color: #fff;
-        }
+  <meta charset="UTF-8">
+  <title>Результати тесту</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #2f2f2f;
+      color: #e0e0e0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 30px;
+    }
 
-        h2, h3 {
-            text-align: center;
-            color: #333;
-        }
+    h2, h3 {
+      margin-bottom: 15px;
+      color: #ffffff;
+    }
 
-        .result-box {
-            max-width: 700px;
-            margin: 0 auto;
-            padding: 20px 30px;
-            background-color: #ffffff; /* білий фон */
-            color: #000; /* чорний текст */
-            border-radius: 8px;
-            box-shadow: 0 0 15px rgba(0,0,0,0.5);
-        }
+    .chart-container {
+      position: relative;
+      height: 30vh; /* 50% высоты экрана */
+      width: 80vw; /* 80% ширины экрана */
+      max-width: 700px;
+      margin: 5px 0 20px 0; /* верхний отступ 5px, нижний 20px */
+    }
 
-        ul {
-            list-style: none;
-            padding: 0;
-        }
+    table {
+      width: 70%;
+      border-collapse: collapse;
+      margin-top: 30px;
+      background: #1e1e1e;
+      border-radius: 8px;
+      overflow: hidden;
+    }
 
-        ul li {
-            background: #f9f9f9;
-            margin: 8px 0;
-            padding: 10px;
-            border-radius: 5px;
-            font-size: 16px;
-        }
+    th, td {
+      padding: 10px;
+      border: 1px solid #333;
+      text-align: left;
+    }
 
-        ul li b {
-            color: #4CAF50;
-        }
+    th {
+      background: #2a2a2a;
+      color: #ffffff;
+    }
 
-        p {
-            margin-top: 20px;
-            line-height: 1.6;
-        }
-
-        i {
-            color: #555;
-        }
-    </style>
+    tr:nth-child(even) {
+      background: #1a1a1a;
+    }
+  </style>
 </head>
 <body>
+<h2 th:text="'Результати для користувача: ' + ${username}"></h2>
+<br>
 
-<div class="result-box">
-    <h2>Дякуємо, <span th:text="${username}"></span>!</h2>
-    <p>Ваші відповіді збережено. Ви відповіли на <span th:text="${count}"></span> питань.</p>
+<label>Гігієнічні фактори</label>
+<div class="chart-container">
+  <canvas id="hygieneChart"></canvas>
+</div>
+<br>
 
-    <h3>Результати за факторами:</h3>
-    <ul>
-        <li>Мотиваційні фактори: <b th:text="${motivationAvg}"></b> / 5</li>
-        <li>Гігієнічні фактори: <b th:text="${hygieneAvg}"></b> / 5</li>
-    </ul>
-
-    <p>
-        <i>
-            Якщо мотиваційні фактори високі → робота приносить задоволення і є розвиток.<br>
-            Якщо гігієнічні фактори низькі → існує ризик незадоволеності умовами праці.
-        </i>
-    </p>
+<label>Мотиваційні фактори</label>
+<div class="chart-container">
+  <canvas id="motivationChart"></canvas>
 </div>
 
+<!--<h3>Детальні відповіді:</h3>-->
+<!--<table>-->
+<!--  <thead>-->
+<!--  <tr>-->
+<!--    <th>Питання</th>-->
+<!--    <th>Оцінка</th>-->
+<!--  </tr>-->
+<!--  </thead>-->
+<!--  <tbody>-->
+<!--  <tr th:each="a : ${answers}">-->
+<!--    <td th:text="${a.question}"></td>-->
+<!--    <td th:text="${a.score}"></td>-->
+<!--  </tr>-->
+<!--  </tbody>-->
+<!--</table>-->
+
+<script th:inline="javascript">
+  /*<![CDATA[*/
+  const hygieneLabels = [
+    'Фінансові мотиви',
+    'Визнання',
+    'Ставлення керівництва',
+    'Колектив'
+  ];
+  const hygieneData = [23, 11, 12, 15]; // TODO: замінити на thymeleaf-передані дані
+
+  const motivationLabels = [
+    'Відповідальність',
+    'Кар’єра',
+    'Досягнення',
+    'Зміст роботи'
+  ];
+  const motivationData = [15, 22, 21, 21]; // TODO: замінити на thymeleaf-передані дані
+
+  const hygieneChart = new Chart(document.getElementById('hygieneChart'), {
+    type: 'bar',
+    data: {
+      labels: hygieneLabels,
+      datasets: [{
+        label: 'Бали',
+        data: hygieneData,
+        backgroundColor: 'rgba(54, 162, 235, 0.7)'
+      }]
+    },
+    options: {
+      indexAxis: 'y',
+      responsive: true,
+      plugins: {
+        legend: { display: false },
+        datalabels: {
+          anchor: 'end',
+          align: 'right',
+          color: '#fff',
+          font: {
+            weight: 'bold',
+            size: 14 // размер шрифта для значений
+          },
+          formatter: value => value
+        }
+      },
+      scales: {
+        x: {
+          beginAtZero: true,
+          max: 35,
+          ticks: {
+            color: '#bbb',
+            font: {
+              size: 12 // размер шрифта для цифр на оси X
+            }
+          },
+          grid: { color: '#2f2f2f' }
+        },
+        y: {
+          ticks: {
+            color: '#bbb',
+            font: {
+              size: 14 // ← ВОТ ЗДЕСЬ увеличиваем размер текста меток
+            }
+          },
+          grid: { color: '#999' }
+        }
+      }
+    },
+    plugins: [ChartDataLabels]
+  });
+
+  const motivationChart = new Chart(document.getElementById('motivationChart'), {
+    type: 'bar',
+    data: {
+      labels: motivationLabels,
+      datasets: [{
+        label: 'Бали',
+        data: motivationData,
+        backgroundColor: 'rgba(75, 192, 192, 0.7)'
+      }]
+    },
+    options: {
+      indexAxis: 'y',
+      responsive: true,
+      plugins: {
+        legend: { display: false },
+        datalabels: {
+          anchor: 'end',
+          align: 'right',
+          color: '#fff',
+          font: {
+            weight: 'bold',
+            size: 14
+          },
+          formatter: value => value
+        }
+      },
+      scales: {
+        x: {
+          beginAtZero: true,
+          max: 35,
+          ticks: {
+            color: '#bbb',
+            font: {
+              size: 12
+            }
+          },
+          grid: { color: '#2f2f2f' }
+        },
+        y: {
+          ticks: {
+            color: '#bbb',
+            font: {
+              size: 14 // ← И здесь тоже увеличиваем
+            }
+          },
+          grid: { color: '#999' }
+        }
+      }
+    },
+    plugins: [ChartDataLabels]
+  });
+</script>
 </body>
 </html>
-

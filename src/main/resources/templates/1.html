@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Результат</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 40px;
+      background-color: #2f2f2f; /* антрацит */
+      color: #fff;
+    }
+
+    h2, h3 {
+      text-align: center;
+      color: #333;
+    }
+
+    .result-box {
+      max-width: 700px;
+      margin: 0 auto;
+      padding: 20px 30px;
+      background-color: #ffffff; /* білий фон */
+      color: #000; /* чорний текст */
+      border-radius: 8px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.5);
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    ul li {
+      background: #f9f9f9;
+      margin: 8px 0;
+      padding: 10px;
+      border-radius: 5px;
+      font-size: 16px;
+    }
+
+    ul li b {
+      color: #4CAF50;
+    }
+
+    p {
+      margin-top: 20px;
+      line-height: 1.6;
+    }
+
+    i {
+      color: #555;
+    }
+  </style>
+</head>
+<body>
+
+<div class="result-box">
+  <h2>Дякуємо, <span th:text="${username}"></span>!</h2>
+  <p>Ваші відповіді збережено. Ви відповіли на <span th:text="${count}"></span> питань.</p>
+
+  <h3>Результати за факторами:</h3>
+  <ul>
+    <li>Мотиваційні фактори: <b th:text="${motivationAvg}"></b> / 5</li>
+    <li>Гігієнічні фактори: <b th:text="${hygieneAvg}"></b> / 5</li>
+  </ul>
+
+  <p>
+    <i>
+      Якщо мотиваційні фактори високі → робота приносить задоволення і є розвиток.<br>
+      Якщо гігієнічні фактори низькі → існує ризик незадоволеності умовами праці.
+    </i>
+  </p>
+</div>
+
+</body>
+</html>
