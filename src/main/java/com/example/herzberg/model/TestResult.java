@@ -29,11 +29,4 @@ public class TestResult {
 
     public TestResult() {}
 
-    public TestResult(String username, double motivationAvg, double hygieneAvg, LocalDateTime dateTime) {
-        this.username = username;
-        this.motivationAvg = motivationAvg;
-        this.hygieneAvg = hygieneAvg;
-        this.dateTime = dateTime;
-    }
-
 }

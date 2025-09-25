@@ -7,7 +7,6 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.List;
 
 public interface AnswerRepository extends JpaRepository<Answer, Long> {
-    List<Answer> findByUsername(String username);
 
     @Query("SELECT DISTINCT a.username FROM Answer a")
     List<String> findDistinctUsernames();

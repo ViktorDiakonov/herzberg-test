@@ -22,11 +22,4 @@ public class Answer {
     protected void onCreate() {
         createdAt = LocalDateTime.now();
     }
-
-    public LocalDateTime getTimestamp() {
-        if (createdAt == null) {
-            createdAt = LocalDateTime.now(); // создаем timestamp если его нет
-        }
-        return createdAt;
-    }
 }

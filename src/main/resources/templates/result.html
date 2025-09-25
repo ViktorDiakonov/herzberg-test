@@ -69,39 +69,14 @@
   <canvas id="motivationChart"></canvas>
 </div>
 
-<!--<h3>Детальні відповіді:</h3>-->
-<!--<table>-->
-<!--  <thead>-->
-<!--  <tr>-->
-<!--    <th>Питання</th>-->
-<!--    <th>Оцінка</th>-->
-<!--  </tr>-->
-<!--  </thead>-->
-<!--  <tbody>-->
-<!--  <tr th:each="a : ${answers}">-->
-<!--    <td th:text="${a.question}"></td>-->
-<!--    <td th:text="${a.score}"></td>-->
-<!--  </tr>-->
-<!--  </tbody>-->
-<!--</table>-->
-
 <script th:inline="javascript">
   /*<![CDATA[*/
-  const hygieneLabels = [
-    'Фінансові мотиви',
-    'Визнання',
-    'Ставлення керівництва',
-    'Колектив'
-  ];
-  const hygieneData = [23, 11, 12, 15]; // TODO: замінити на thymeleaf-передані дані
+  const hygieneLabels = /*[[${hygieneLabels}]]*/ ['Фінансові мотиви', 'Визнання', 'Ставлення керівництва', 'Колектив'];
+  const hygieneData = /*[[${hygieneScores}]]*/ [23, 11, 12, 15];
 
-  const motivationLabels = [
-    'Відповідальність',
-    'Кар’єра',
-    'Досягнення',
-    'Зміст роботи'
-  ];
-  const motivationData = [15, 22, 21, 21]; // TODO: замінити на thymeleaf-передані дані
+  const motivationLabels = /*[[${motivationLabels}]]*/ ['Відповідальність', 'Кар’єра', 'Досягнення', 'Зміст роботи'];
+  const motivationData = /*[[${motivationScores}]]*/ [15, 22, 21, 21];
+  /*]]>*/
 
   const hygieneChart = new Chart(document.getElementById('hygieneChart'), {
     type: 'bar',

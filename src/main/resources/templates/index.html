@@ -75,18 +75,22 @@
 
 <form th:action="@{/submit}" method="post">
     <label>Ім’я:</label>
-    <input type="text" name="username" required>
+    <label>
+        <input type="text" name="username" required>
+    </label>
 
     <div th:each="q, iStat : ${questions}" class="question-block">
         <p th:text="${q}"></p>
         <input type="hidden" th:name="questions" th:value="${q}">
-        <select th:name="scores" required>
-            <option value="1">1 (зовсім не погоджуюсь)</option>
-            <option value="2">2</option>
-            <option value="3">3 (нейтрально)</option>
-            <option value="4">4</option>
-            <option value="5">5 (повністю погоджуюсь)</option>
-        </select>
+        <label>
+            <select th:name="scores" required>
+                <option value="1">1 (зовсім не погоджуюсь)</option>
+                <option value="2">2</option>
+                <option value="3">3 (нейтрально)</option>
+                <option value="4">4</option>
+                <option value="5">5 (повністю погоджуюсь)</option>
+            </select>
+        </label>
     </div>
 
     <button type="submit">Відправити</button>
