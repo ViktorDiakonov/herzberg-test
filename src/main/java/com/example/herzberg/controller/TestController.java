@@ -1,7 +1,6 @@
 package com.example.herzberg.controller;
 
 import com.example.herzberg.model.Answer;
-import com.example.herzberg.model.ScoreCalculator;
 import com.example.herzberg.model.UserResultDto;
 import com.example.herzberg.repository.AnswerRepository;
 import org.springframework.stereotype.Controller;
@@ -76,41 +75,6 @@ public class TestController {
         return "redirect:/results/user/" + encodedUsername;
     }
 
-//    @GetMapping("/results/user/{username}")
-//    public String showUserResult(@PathVariable String username, Model model) {
-//        String dbUsername = username.replace("-", " ");
-//        List<Answer> answers = answerRepo.findByUsernameOrderByCreatedAtDesc(dbUsername);
-//
-//        if (answers.isEmpty()) {
-//            return "redirect:/results";
-//        }
-//
-//        // Берем только последний тест
-//        List<Answer> lastTest = answers.size() >= 28 ? answers.subList(0, 28) : answers;
-//
-//        Map<String, Integer> hygiene = new LinkedHashMap<>();
-//        Map<String, Integer> motivation = new LinkedHashMap<>();
-//
-//        // Используем lastTest вместо answers
-//        hygiene.put("Фінансові мотиви", lastTest.get(2).getScore() + lastTest.get(11).getScore() + lastTest.get(22).getScore());
-//        hygiene.put("Суспільне визнання", lastTest.get(8).getScore() + lastTest.get(26).getScore());
-//        hygiene.put("Ставлення з керівництвом", lastTest.get(5).getScore() + lastTest.get(13).getScore() + lastTest.get(20).getScore());
-//        hygiene.put("Співпраця в колективі", lastTest.get(9).getScore() + lastTest.get(27).getScore());
-//
-//        motivation.put("Відповідальність роботи", lastTest.get(0).getScore() + lastTest.get(21).getScore());
-//        motivation.put("Кар'єра, просування по службі", lastTest.get(6).getScore() + lastTest.get(23).getScore());
-//        motivation.put("Досягнення особистого успіху", lastTest.get(12).getScore() + lastTest.get(18).getScore());
-//        motivation.put("Зміст роботи", lastTest.get(4).getScore() + lastTest.get(15).getScore() + lastTest.get(16).getScore() + lastTest.get(19).getScore());
-//
-//        model.addAttribute("username", dbUsername);
-//        model.addAttribute("answers", lastTest);
-//        model.addAttribute("hygieneLabels", hygiene.keySet());
-//        model.addAttribute("hygieneScores", hygiene.values());
-//        model.addAttribute("motivationLabels", motivation.keySet());
-//        model.addAttribute("motivationScores", motivation.values());
-//
-//        return "result";
-//    }
 @GetMapping("/results/user/{username}")
 public String showUserResult(@PathVariable String username, Model model) {
     String dbUsername = username.replace("-", " ");
@@ -177,46 +141,6 @@ public String showUserResult(@PathVariable String username, Model model) {
     return "result";
 }
 
-//@GetMapping("/results")
-//public String showAllResults(Model model) {
-//    List<String> users = answerRepo.findDistinctUsernames();
-//    List<UserResultDto> results = new ArrayList<>();
-//
-//    for (String username : users) {
-//        List<Answer> answers = answerRepo.findByUsernameOrderByCreatedAtDesc(username);
-//
-//        // Берем только последний тест (первые 28 ответов)
-//        if (answers.size() >= 28) {
-//            List<Answer> lastTest = answers.subList(0, 28); // берем ровно 28 ответов
-//
-//            UserResultDto dto = new UserResultDto();
-//            dto.setUsername(username);
-//            dto.setDateTime(lastTest.get(0).getCreatedAt());
-//
-//            // Гігієнічні фактори - используем lastTest вместо answers
-
-    /// /            dto.setFinancialMotives(lastTest.get(2).getScore() + lastTest.get(11).getScore() + lastTest.get(22).getScore());
-//            int financialMotivesRaw = lastTest.get(2).getScore() + lastTest.get(11).getScore() + lastTest.get(22).getScore();
-//            int financialMotivesPercent = ScoreCalculator.calculatePercentage(financialMotivesRaw, 15);
-//            dto.setFinancialMotives(financialMotivesPercent);
-//            dto.setRecognition(lastTest.get(8).getScore() + lastTest.get(26).getScore());
-//            dto.setManagementAttitude(lastTest.get(5).getScore() + lastTest.get(13).getScore() + lastTest.get(20).getScore());
-//            dto.setTeamwork(lastTest.get(9).getScore() + lastTest.get(27).getScore());
-//
-//            // Мотиваційні факторы - используем lastTest вместо answers
-//            dto.setResponsibility(lastTest.get(0).getScore() + lastTest.get(21).getScore());
-//            dto.setCareer(lastTest.get(6).getScore() + lastTest.get(23).getScore());
-//            dto.setAchievements(lastTest.get(12).getScore() + lastTest.get(18).getScore());
-//            dto.setWorkContent(lastTest.get(4).getScore() + lastTest.get(15).getScore() + lastTest.get(16).getScore() + lastTest.get(19).getScore());
-//
-//            results.add(dto);
-//        }
-//    }
-//
-//    results.sort((r1, r2) -> r2.getDateTime().compareTo(r1.getDateTime()));
-//    model.addAttribute("results", results);
-//    return "results";
-//}
 // Метод для расчета процентов
     private int calculatePercentage(int actualScore, int maxScore) {
         int minScore = maxScore / 5; // минимальный балл (все ответы = 1)
